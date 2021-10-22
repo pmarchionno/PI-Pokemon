@@ -1,0 +1,25 @@
+.menu {
+  /* background-color: #3595f6; */
+  /* padding: 1rem 2rem; */
+  background-image: url("../../assets/images/fondo-nav.jpg");
+  border-bottom: 1px solid #c4ccde;
+  width: 100%;
+  float: left;
+  height: 62px;
+}
+
+.menu ul li {
+  float: right;
+  list-style-type: none;
+  text-align: left;
+}
+
+.menu ul li a {
+  padding: 10px;
+}
+
+.list{
+  display: flex;
+  flex-direction: row;
+  float: right;
+}

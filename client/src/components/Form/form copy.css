@@ -1,0 +1,124 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+body{
+    min-height:100vh;
+    display:grid;
+    place-content:center;
+    font-family:sans-serif;
+    color:#6b6b6b;
+}
+form{
+    width:90vw;
+    max-width:768px;
+    border:1px solid #ddd;
+    padding:3vw;
+    display:flex;
+    flex-direction:column;
+    border-radius:5px;
+}
+
+label{
+    margin-bottom:15px;
+    position:relative;
+    border-bottom:1px solid #ddd;
+}
+input{
+    width:100%;
+    padding:10px 0px;
+    margin-top:20px;
+    border:none;
+    outline:none;
+}
+input::placeholder{
+    opacity:0;
+}
+span{
+    position:absolute;
+    top:0;
+    left:0;
+    transform:translateY(30px);
+    font-size:0.825em;
+    transition-duration:300ms;
+}
+button{
+    padding:15px 0px; 
+    margin-top:20px;
+    background:purple;
+    color:#fff;
+    border:1px solid purple;
+    cursor:pointer;
+    border-radius:3px;
+}
+
+label:focus-within > span,
+input:not(:placeholder-shown) + span{
+    color:purple;
+    transform:translateY(0px);
+}
+
+
+
+
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0px;
+}
+
+.form-content label {
+  margin: 5px 0px;
+  font-size: 18px;
+}
+
+.form-content input,
+.form-content select {
+  height: 30px;
+  font-size: 18px;
+}
+
+.msg-error {
+  color: red;
+  font-size: 16px;
+}
+
+.border-input {
+  width: 200px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border: solid 1px #ddd;
+}
+
+.border-input::placeholder {
+  color: rgb(0, 0, 0, .16);
+  box-shadow: 0px 5px 10px rgba(78, 129, 172, 0.16);
+  /* border: 2px solid #213f8f; */
+  border-color: rgb(78, 129, 172);
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+/* .border-error {
+  width: 200px;
+  border: 1px solid red;
+} */
+
+.button-submit {
+  background-color: royalblue;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.button-submit-disable {
+  background-color: darkgray;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #fff;
+}

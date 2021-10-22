@@ -1,0 +1,17 @@
+.card{
+  height: 200px;
+  width: 300px;
+  background-color: seagreen;
+  
+  border-radius: 15px;
+  }
+  .h5Card{
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
+  }
+  .spanCard{
+      color: white;
+      text-decoration: none;
+      font-size: 15px;
+  }

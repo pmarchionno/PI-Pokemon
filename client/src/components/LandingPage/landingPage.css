@@ -1,0 +1,50 @@
+.landingPage{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: calc(114vh - 88px);
+  background-image: url("../../assets/images/fondo1_1.jpg");
+  height: 100vh;
+  background-size: 100% 100%;
+}
+
+.img-logo{
+  max-width:45%;
+}
+
+.img-to-home{
+  margin-top: -50px;
+  max-width: 20%;
+  display: inline-block;
+  cursor: pointer;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transform: translateZ(-100px);
+  -moz-transform : scale(2);      /* Firefox */
+  -webkit-transform : scale(2);   /* Chrome - Safari */
+  -o-transform : scale(2);        /* Opera */
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.img-logo:after{
+  content: '';
+  position: absolute;
+  z-index: -1;
+  /* +size(100%, 100%); */
+  border-radius: 5px;
+  box-shadow: 0 14px 50px -4px hsla(0, 0%, 0%, 0.15);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1.4);
+}
+
+.img-logo:hover{
+  transform: translateZ(0px);
+  -moz-transform : scale(1.25);      /* Firefox */
+  -webkit-transform : scale(1.25);   /* Chrome - Safari */
+  -o-transform : scale(1.25);        /* Opera */
+}
+
+.img-logo:hover:after{
+  opacity: 1;
+}

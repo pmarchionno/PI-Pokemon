@@ -1,0 +1,12 @@
+.app-content{
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #e3e9ee;
+  /* background-image: url("../../assets/images/fondo-nav.jpg"); */
+}
+
+.home-content{
+  display: block;
+  /* flex-wrap: wrap;
+  background-image: url("../../assets/images/fondo-nav.jpg"); */
+}

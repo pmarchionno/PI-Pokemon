@@ -1,0 +1,19 @@
+.sidebar{
+  width: 14rem;
+  height: 100vh; /* calc(100vh - 52px); */
+  border-right: 1px solid #c4ccde;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0 1rem;
+}
+
+.sidebar ul li {
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.searchBar{
+  width: 100%;
+}
