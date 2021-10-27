@@ -1,12 +1,20 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { getPokemonTyes } from "../../actions";
-import './form.css';
+
+import {Formulario, Label, ContenedorTerminos, ContenedorBotonCentrado, Boton, MensajeExito, MensajeError} from './Formularios';
+import Input from './Input';
+
+// import './form.css';
+import * as FcIcons from 'react-icons/fc';
+import { validText, validNumber } from './validations';
+
 // import imgDefault from '../../images/dog.png'
 
 const Form = (props) => {
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getPokemonTyes())
   }, [dispatch])
@@ -22,14 +30,26 @@ const Form = (props) => {
       speed: '',
       height: '',
       weight: '',
-      image: 'https://cdn2.thedogapi.com/images/S1V3Qeq4X.jpg',
+      image: 'https://p4.wallpaperbetter.com/wallpaper/710/195/806/pokemon-pikachu-soft-shading-fan-art-1400x1046-anime-pokemon-hd-art-wallpaper-preview.jpg',
       type1: '',
       type2: '',
       types: []
     }
   )
 
-  const [error, setError] = useState({});
+  const [error, setError] = useState({
+    name: '',
+    life: '',
+    attack: '',
+    defense: '',
+    speed: '',
+    height: '',
+    weight: '',
+    image: 'https://p4.wallpaperbetter.com/wallpaper/710/195/806/pokemon-pikachu-soft-shading-fan-art-1400x1046-anime-pokemon-hd-art-wallpaper-preview.jpg',
+    type1: '',
+    type2: '',
+    types: []
+  });
 
   function validate(e) {
     const { name, value } = e.target;
@@ -37,271 +57,265 @@ const Form = (props) => {
     let inputName = name.charAt(0).toUpperCase() + name.slice(1);
 
     if (input[name] === "") {
-      setError({ ...error, [name]: `El campo ${inputName} no puede estar vacio` });
-    } else {
-      setError({ ...error, [name]: "" });
+      setError({ ...error, [name]: `the ${inputName} field is required` });
     }
   }
 
-  async function handleSubmit(e) {
+  async function submit(e) {
     e.preventDefault();
-    axios.post('http://localhost:3001/dogs', input);
+    axios.post('http://localhost:3001/pokemon', input);
     window.alert("Hello world!");
   }
 
   const handleInputChange = (e) => {
-    const target = e.target;
-    const regexName = /^[A-Za-z]+$/;
-    if (e.target.name === 'temperament') {
-      setInput({
-        ...input,
-        [e.target.name]: [...input.temperament, e.target.value]
-      });
+    const nameEvent = e.target.name;
+
+    let type = [];
+    if (e.target.name == 'type1') {
+      if (e.target.value.length > 0) type = type.concat(e.target.value)
     } else {
+      if (input.type1.length > 0) { type = type.concat(input.type1); }
+    }
+
+    if (e.target.name == 'type2') {
+      if (e.target.value.length > 0) type = type.concat(e.target.value)
+    } else {
+      if (input.type2.length > 0) { type = type.concat(input.type2); }
+    }
+
+    if (nameEvent === 'image' || nameEvent === 'type1' || nameEvent === 'type2') {
       setInput({
         ...input,
-        [e.target.name]: e.target.value
+        [nameEvent]: e.target.value,
+        types: type
       })
+    } else if (nameEvent == 'name') {
+      if (e.target.value == '' || /^[A-Za-z\s\,]/.test(e.target.value))
+        setInput({
+          ...input,
+          [nameEvent]: e.target.value,
+          types: type
+        })
+    } else {
+      if (e.target.value == '' || /^[0-9\b]+$/.test(e.target.value))
+        setInput({
+          ...input,
+          [nameEvent]: e.target.value,
+          types: type
+        })
     }
   };
 
+  const [usuario, cambiarUsuario] = useState({campo: '', valido: null});
+	const [nombre, cambiarNombre] = useState({campo: '', valido: null});
+	const [password, cambiarPassword] = useState({campo: '', valido: null});
+	const [password2, cambiarPassword2] = useState({campo: '', valido: null});
+	const [correo, cambiarCorreo] = useState({campo: '', valido: null});
+	const [telefono, cambiarTelefono] = useState({campo: '', valido: null});
+	const [terminos, cambiarTerminos] = useState(false);
+	const [formularioValido, cambiarFormularioValido] = useState(null);
+
+  const expresiones = {
+		usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
+		nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
+		password: /^.{4,12}$/, // 4 a 12 digitos.
+		correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+		telefono: /^\d{7,14}$/ // 7 a 14 numeros.
+	}
+
+  const onChangeTerminos = (e) => {
+		cambiarTerminos(e.target.checked);
+	}
+
+  const validarPassword2 = () => {
+		if(password.campo.length > 0){
+			if(password.campo !== password2.campo){
+				cambiarPassword2((prevState) => {
+					return {...prevState, valido: 'false'}
+				});
+			} else {
+				cambiarPassword2((prevState) => {
+					return {...prevState, valido: 'true'}
+				});
+			}
+		}
+	}
+
+  const onSubmit = (e) => {
+		e.preventDefault();
+
+		if(
+			usuario.valido === 'true' &&
+			nombre.valido === 'true' &&
+			password.valido === 'true' &&
+			password2.valido === 'true' &&
+			correo.valido === 'true' &&
+			telefono.valido === 'true' &&
+			terminos
+		){
+			cambiarFormularioValido(true);
+			cambiarUsuario({campo: '', valido: ''});
+			cambiarNombre({campo: '', valido: null});
+			cambiarPassword({campo: '', valido: null});
+			cambiarPassword2({campo: '', valido: 'null'});
+			cambiarCorreo({campo: '', valido: null});
+			cambiarTelefono({campo: '', valido: null});
+
+			// ... 
+		} else {
+			cambiarFormularioValido(false);
+		}
+	}
+
   return (
-    <div>
+    <Formulario action="" onSubmit={onSubmit}>
+				<Input
+					estado={usuario}
+					cambiarEstado={cambiarUsuario}
+					tipo="text"
+					label="Usuario"
+					placeholder="john123"
+					name="usuario"
+					leyendaError="El usuario tiene que ser de 4 a 16 dígitos y solo puede contener numeros, letras y guion bajo."
+					expresionRegular={expresiones.usuario}
+				/>
+				<Input
+					estado={nombre}
+					cambiarEstado={cambiarNombre}
+					tipo="text"
+					label="Nombre"
+					placeholder="John Doe"
+					name="usuario"
+					leyendaError="El nombre solo puede contener letras y espacios."
+					expresionRegular={expresiones.nombre}
+				/>
+				<Input
+					estado={password}
+					cambiarEstado={cambiarPassword}
+					tipo="password"
+					label="Contraseña"
+					name="password1"
+					leyendaError="La contraseña tiene que ser de 4 a 12 dígitos."
+					expresionRegular={expresiones.password}
+				/>
+				<Input
+					estado={password2}
+					cambiarEstado={cambiarPassword2}
+					tipo="password"
+					label="Repetir Contraseña"
+					name="password2"
+					leyendaError="Ambas contraseñas deben ser iguales."
+					funcion={validarPassword2}
+				/>
+				<Input
+					estado={correo}
+					cambiarEstado={cambiarCorreo}
+					tipo="email"
+					label="Correo Electrónico"
+					placeholder="john@correo.com"
+					name="correo"
+					leyendaError="El correo solo puede contener letras, numeros, puntos, guiones y guion bajo."
+					expresionRegular={expresiones.correo}
+				/>
+				<Input
+					estado={telefono}
+					cambiarEstado={cambiarTelefono}
+					tipo="text"
+					label="Teléfono"
+					placeholder="4491234567"
+					name="telefono"
+					leyendaError="El telefono solo puede contener numeros y el maximo son 14 dígitos."
+					expresionRegular={expresiones.telefono}
+				/>
 
-      <div className="container">
-        <section className="courses__list row center middle wrap">
-          <article className="course">
-            <div className='aaaa'>
-              <label for="name">
-                <input
-                  type="text"
-                  id="name"
-                  name='name'
-                  placeholder="Name"
-                  value={input.name}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Name</span>
-              </label>
-              {!error.name ? null : <span className='msg-error'>{error.name}</span>}
-            </div>
 
-            <div>
-              <label for="life">
-                <input
-                  type="number"
-                  id="life"
-                  name='life'
-                  min="1"
-                  placeholder="Life"
-                  value={input.life}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Life</span>
-              </label>
-              {!error.life ? null : <span className='msg-error'>{error.life}</span>}
-            </div>
 
-            <div>
-              <label for="attack">
-                <input
-                  type="number"
-                  id="attack"
-                  name='attack'
-                  min="1"
-                  placeholder="Attack"
-                  value={input.attack}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Attack</span>
-              </label>
-              {!error.attack ? null : <span className='msg-error'>{error.attack}</span>}
-            </div>
+				<ContenedorTerminos>
+					<Label>
+						<input 
+							type="checkbox"
+							name="terminos"
+							id="terminos"
+							checked={terminos} 
+							onChange={onChangeTerminos}
+						/>
+						Acepto los Terminos y Condiciones
+					</Label>
+				</ContenedorTerminos>
+				{/* {formularioValido === false && <MensajeError>
+					<p>
+						<FontAwesomeIcon icon={FcHighPriority}/>
+						<b>Error:</b> Por favor rellena el formulario correctamente.
+					</p>
+				</MensajeError>} */}
+				<ContenedorBotonCentrado>
+					<Boton type="submit">Enviar</Boton>
+					{formularioValido === true && <MensajeExito>Formulario enviado exitosamente!</MensajeExito>}
+				</ContenedorBotonCentrado>
+			</Formulario>
 
-            <div>
-              <label for="defense">
-                <input
-                  type="number"
-                  id="defense"
-                  name='defense'
-                  min="1"
-                  placeholder="Defense"
-                  value={input.defense}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Defense</span>
-              </label>
-              {!error.defense ? null : <span className='msg-error'>{error.defense}</span>}
-            </div>
+    // <div className='style-component'>
+    //   <label id='222'>Label</label>
+    //   <form className="form" onSubmit={submit}>
 
-            <div>
-              <label for="speed">
-                <input
-                  type="number"
-                  id="speed"
-                  name='speed'
-                  min="1"
-                  placeholder='Speed'
-                  value={input.speed}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Speed</span>
-              </label>
-              {!error.speed ? null : <span className='msg-error'>{error.speed}</span>}
-            </div>
+    //     <div className='component-input'>
+    //       <label for='name'>Name</label>
+    //       <div className='component-input-group'>
+    //         <input
+    //           id={"form__" + `${input.name}`}
+    //           type="text"
+    //           name='name'
+    //           value={input.name}
+    //           placeholder='Name'
+    //           className={!error.name ? '' : 'border-error'}
+    //           onChange={(e) => handleInputChange(e)}
+    //           onBlur={(e) => validate(e)}
+    //           required
+    //         />
+    //         <div className='component-icon'> {FcIcons.FcCheckmark()}</div>
+    //         //icon={estado.valido === 'true' ? faCheckCircle : faTimesCircle}
+		// 			//valido={estado.valido}
+    //       </div>
+    //       {!error.name ? null : <span className='component-input-error'>{error.name}</span>}
+    //     </div>
 
-            <div>
-              <label for="height">
-                <input
-                  type="number"
-                  id="height"
-                  name='height'
-                  min="1"
-                  placeholder="Height"
-                  value={input.height}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Height</span>
-              </label>
-              {!error.height ? null : <span className='msg-error'>{error.height}</span>}
-            </div>
+    //     <div className='component-input'>
+    //       <label for='life'>Life</label>
+    //       <div className='component-input-group'>
+    //         <input
+    //           id={"form__" + `${input.life}`}
+    //           type="text"
+    //           name='life'
+    //           value={input.life}
+    //           placeholder='Life'
+    //           className={!error.life ? '' : 'border-error'}
+    //           onChange={(e) => handleInputChange(e)}
+    //           onBlur={(e) => validate(e)}
+    //           required
+    //         />
+    //         <div> {FcIcons.FcCheckmark()}</div>
+    //       </div>
+    //       {!error.life ? null : <span className='component-input-error'>{error.life}</span>}
+    //     </div>
 
-            <div>
-              <label for="weight">
-                <input
-                  type="number"
-                  id="weight"
-                  name='weight'
-                  min="1"
-                  placeholder='Weight'
-                  value={input.weight}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Weight</span>
-              </label>
-              {!error.weight ? null : <span className='msg-error'>{error.weight}</span>}
-            </div>
 
-            <div>
-              <label for="image">
-                <input
-                  type="text"
-                  id="image"
-                  name='image'
-                  placeholder='Image'
-                  value={input.image}
-                  onChange={handleInputChange}
-                  onBlur={(e) => validate(e)}
-                  required
-                />
-                <span>Image</span>
-              </label>
-              {!error.image ? null : <span className='msg-error'>{error.image}</span>}
-            </div>
-
-            {/* <div>
-          <label>Type 1</label>
-          <input name='type1'
-            type="number"
-            min="1"
-            placeholder='Type'
-            value={input.type1}
-            onChange={handleInputChange}
-            onBlur={(e) => validate(e)}
-            required>
-          </input>
-          {!error.type1 ? null : <span className='msg-error'>{error.type1}</span>}
-        </div>
-
-        <div>
-          <label>Type 2</label>
-          <input name='type2'
-            type="number"
-            min="1"
-            placeholder='Type'
-            value={input.type2}
-            onChange={handleInputChange}
-            onBlur={(e) => validate(e)}
-            required>
-          </input>
-          {!error.type2 ? null : <span className='msg-error'>{error.type2}</span>}
-        </div> */}
-
-            <div>
-              <div className='filter-combo'>
-                <select onChange={handleInputChange} name='type1' placeholder='Select'>
-                  <option value=''>Select...</option>
-                  {
-                    typeList.map((type, index) => (
-                      <option value={type} key={`type1_${index}`}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
-                    ))
-                  }
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <div className='filter-combo'>
-                <select onChange={handleInputChange} name='type2' placeholder='Select'>
-                  <option value=''>Select...</option>
-                  {
-                    typeList.map((type, index) => (
-                      <option value={type} key={`type2_${index}`}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
-                    ))
-                  }
-                </select>
-              </div>
-            </div>
-
-            <button
-              type='submit'
-              className={
-                input.name === "" ||
-                  input.height === "" ||
-                  input.weight === "" ||
-                  input.lifeSpan === ""
-                  // input.temperament.length <= 0
-                  ? 'button-submit-disable'
-                  : 'button-submit'
-              }
-              onClick={handleSubmit}
-              disabled={
-                input.name === "" ||
-                  input.height === "" ||
-                  input.weight === "" ||
-                  input.lifeSpan === ""
-                  // input.temperament.length <= 0
-                  ? true
-                  : false
-              }
-            >Create Pokémon</button>  
-          </article>
-
-          <article className="course">
-            <figure className="course--logo">
-              <img className="course--logo--img" src={input['image']} alt="" />
-            </figure>
-          </article>
-
-        </section>
-        {/* <button className="course--button">Realizar Voto</button> */}
-
-      </div>
-    </div>
+    //     <button
+    //       className={
+    //         ( input.name === "" ||
+    //           input.life === "" ||
+    //           input.attack === "" ||
+    //           input.defense === "" ||
+    //           input.speed === "" ||
+    //           input.height === "" ||
+    //           input.weight === "" ||
+    //           ( input.type1 === "" &&
+    //           input.type2 === "" ) )
+    //           ? 'button-disable'
+    //           : 'button'
+    //       }
+    //     >Create</button>
+    //   </form>
+    // </div>
   )
 }
 

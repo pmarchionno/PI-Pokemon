@@ -26,11 +26,11 @@ conn.sync({ force: true }).then( async () => {
 
   try{
     //Pre-carga de la base de datos con los tipos
-    // let typesApi = await axios.get('https://pokeapi.co/api/v2/type');
-    // let types = [];
+    let typesApi = await axios.get('https://pokeapi.co/api/v2/type');
+    let types = [];
     
-    // typesApi.data.results.map((el) => {types.push({name: el.name})})
-    // await Type.bulkCreate(types);
+    typesApi.data.results.map((el) => {types.push({name: el.name})})
+    await Type.bulkCreate(types);
     
     // const setPokes = [
     //   {id: 10001, name: 'Pok 1', height: '40', weight: '1', life: '10'},

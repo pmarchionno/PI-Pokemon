@@ -45,8 +45,8 @@ a {
   -o-transition: 0.2s ease all;
   transition: 0.2s ease all;
 
-  margin-bottom: 30px;
-  padding: 30px;
+  margin-bottom: 12px;
+  padding: 12px;
   position: relative;
   z-index: 200;
   border: 2px transparent;
@@ -80,9 +80,10 @@ a {
 
 .titulo {
   /* margin-bottom: 10px; */
-  color: black;
-  font-weight: 600;
+  color: #0074d9;
+  /* font-weight: 600; */
   font-size: inherit; /*30px;*/
+  
 }
 
 .descripcion {
@@ -107,13 +108,13 @@ a {
 
 .opciones.active {
   display: block;
-  animation: fadeIn .3s forwards;
+  animation: fadeIn 0.3s forwards;
 }
 
 .opciones::-webkit-scrollbar {
-  width: 1px;     /* Tamaño del scroll en vertical */
-  height: 1px;    /* Tamaño del scroll en horizontal */
-  display: none;  /* Ocultar scroll */
+  width: 1px; /* Tamaño del scroll en vertical */
+  height: 1px; /* Tamaño del scroll en horizontal */
+  display: none; /* Ocultar scroll */
 }
 
 .selectbox::-webkit-scrollbar-thumb {
@@ -123,17 +124,27 @@ a {
   border-radius: 10px;
 }
 
-@keyframes fadeIn{
-  from{
-    transform: translateY(-90px) scale(.5);
+@keyframes fadeIn {
+  from {
+    transform: translateY(-90px) scale(0.5);
   }
-  to{
+  to {
     transform: translateY(0) scale(1);
   }
 }
 
-.contenido-select h1{
+.contenido-select {
+  display: flex;
+}
+
+.contenido-select h1 {
   font-size: inherit;
+}
+
+.contenido-select img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 }
 
 .contenido-opcion {
@@ -150,26 +161,30 @@ a {
   padding: 30px; /************/
 }
 
-.opciones .contenido-opcion{
+.opciones .contenido-opcion {
   padding: 5px;
 }
 
-.contenido-opcion img{
+.contenido-opcion img {
   width: 30px;
   height: 30px;
   margin-right: 10px;
 }
 
-.opciones .contenido-opcion:hover{
+.opciones .contenido-opcion:hover {
   background: #213f8f;
 }
 
 .opciones .contenido-opcion:hover .titulo,
-.opciones .contenido-opcion .descripcion{
+.opciones .contenido-opcion .descripcion {
   color: white;
 }
 
-@media screen and (max-width: 800px){
+img .hiddenImgType {
+  display: none;
+}
+
+@media screen and (max-width: 800px) {
   .selectbox {
     width: 100%;
   }

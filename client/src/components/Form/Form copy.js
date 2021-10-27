@@ -72,7 +72,7 @@ const Form = (props) => {
         <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}else{{handleSubmit}}" className="form_">
           <div>
             <div className='aaaa'>
-              <label for="name">
+              <label htmlFor="name">
                 <input
                   type="text"
                   id="name"
@@ -89,7 +89,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="life">
+              <label htmlFor="life">
                 <input
                   type="number"
                   id="life"
@@ -107,7 +107,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="attack">
+              <label htmlFor="attack">
                 <input
                   type="number"
                   id="attack"
@@ -125,7 +125,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="defense">
+              <label htmlFor="defense">
                 <input
                   type="number"
                   id="defense"
@@ -143,7 +143,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="speed">
+              <label htmlFor="speed">
                 <input
                   type="number"
                   id="speed"
@@ -161,7 +161,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="height">
+              <label htmlFor="height">
                 <input
                   type="number"
                   id="height"
@@ -179,7 +179,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="weight">
+              <label htmlFor="weight">
                 <input
                   type="number"
                   id="weight"
@@ -197,7 +197,7 @@ const Form = (props) => {
             </div>
 
             <div>
-              <label for="image">
+              <label htmlFor="image">
                 <input
                   type="text"
                   id="image"
@@ -302,6 +302,54 @@ const Form = (props) => {
         </form>
 
       </div>
+
+      {/* Otra forma */}
+      <Fragment>
+        <Link to='/principal'>
+            <button className="posButt">Regresar</button>            
+        </Link>
+        <form className="form">
+        <div className="contenedores" className="style">
+            <label className="headers">Nombre:</label> <br />
+            <input type="text" placeholder="nombre" value={input.name} className="styleM" required/>
+        </div>
+        <div className="contenedores">
+            <label className="headers">Altura:</label> <br />
+            <input type="number" min="0" placeholder="min" value={input.name}  className="itemsp" required/>
+            <input type="number" min="0" placeholder="max" value={input.name}  className="itemsp" required/>
+        </div>
+        <div className="contenedores">
+            <label className="headers">Peso:</label> <br />
+            <input type="number" min="0" placeholder="min" value={input.name} className="itemsp" required/>
+            <input type="number" min="0" placeholder="max" value={input.name} className="itemsp" required/>
+        </div>
+        <div className="contenedores">
+            <label className="headers">Años de vida:</label> <br />
+            <input type="number" min="0" value={input.name} placeholder="min"  className="itemsp" required/>
+            <input type="number" min="0" value={input.name} placeholder="max"  className="itemsp" required/>
+        </div>
+        <div className="contenedores" className="style">
+            <label className="headers">Imagen url:</label> <br />
+            <input type="text" value={input.image} placeholder="url" className="styleM"/>
+        </div>
+        {/* <div className="contenedores">
+            <label className="headers">Temperamentos:</label> <br />
+            {!temperamentsE?null:
+                <select onChange={cambiaSelect} className="selecStyle" required>
+                    <option key={-1} value={""} className="selecStyle"></option>
+                    {
+                        temperamentsE.map((item, i) => (
+                            <option key={i} value={item}>{item}</option>
+                        ))
+                    }
+                </select>
+            }
+        </div> */}
+        <div className="contenedores">
+            <input type="submit" value="Crear" className="butt"/>
+        </div>
+        </form>
+    </Fragment>
     </div>
   )
 }

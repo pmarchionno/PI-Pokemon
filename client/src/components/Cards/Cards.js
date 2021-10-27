@@ -1,20 +1,21 @@
 import Card from "../Card/Card";
-
+import './cards.css';
 
 const Cards = (props) => {
   const { listToDraw } = props;
 
   return (
-    <div>
+    <div className='cards-content'>
       {listToDraw?.map(poke => {
         return (
-          <div>
+          <div key={`cards_${poke.id}`}>
             <Card
-              key = {poke.id}
-              name = {poke?.name}
-              types = {poke?.types}
-              image = {poke?.image}
-              flagId = {poke?.flagId}
+              key={`card_${poke.id}`}
+              id={poke.id}
+              name={poke?.name}
+              types={poke?.types}
+              image={poke?.image}
+              flagId={poke?.flagId}
             />
           </div>
         )

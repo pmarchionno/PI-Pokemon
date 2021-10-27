@@ -1,16 +1,16 @@
 const { Router } = require('express');
 const router = Router();
 const axios = require('axios');
-const { response } = require('../app');
 const { Pokemon, Type } = require('../db');
+const { v4: uuidv4 } = require('uuid');
 const { Op } = require('sequelize');
 
-router.get('/', async function(req, res, next){
+router.get('/', async function (req, res, next) {
   const { name } = req.query;
-  
-  try{
-    if(!name){
-      let pokeApi = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=4&offset=0');
+
+  try {
+    if (!name) {
+      let pokeApi = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=22&offset=0');
       let pokeApiUrl = pokeApi.data.results?.map((el) => axios.get(el.url));
 
       let pokeApiInfo = await axios.all(pokeApiUrl);
@@ -20,23 +20,17 @@ router.get('/', async function(req, res, next){
         obj = {
           id: el.data.id,
           name: el.data.name.charAt(0).toUpperCase() + el.data.name.slice(1),
-          life: el.data.stats[0].base_stat,
-          attack: el.data.stats[1].base_stat,
-          defense: el.data.stats[2].base_stat,
-          speed: el.data.stats[5].base_stat,
-          height: el.data.height,
-          weight: el.data.weight,
           image: el.data.sprites.front_default,
           flagId: false,
           types: el.data.types.length > 0 ? el.data.types.map((obj) => obj.type.name) : []
-          }
+        }
         return obj;
       })
 
       let pokeDb = await Pokemon.findAll({
         include: {
           model: Type,
-            attributes: ['name'],
+          attributes: ['name'],
         }
       })
 
@@ -44,32 +38,20 @@ router.get('/', async function(req, res, next){
         let obj = {
           id: el.id,
           name: el.name.charAt(0).toUpperCase() + el.name.slice(1),
-          life: el.life,
-          attack: el.attack,
-          defense: el.defense,
-          speed: el.speed,
-          height: el.height,
-          weight: el.weight,
           image: el.image,
-          flagId: flagId,
-          types: el.Types.map((obj) => obj.name)
+          flagId: el.flagId,
+          types: el.Types?.map((obj) => obj.name)
         }
         return obj;
       })
 
       return res.json([...pokemonApi, ...pokemonBd]);
-    }else{
+    } else {
       let pokeApi = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
-      
+
       let pokemonApi = [{
         id: pokeApi.data.id,
-        name: pokeApi.data.name.charAt(0).toUpperCase() + pokeApi.data.name.slice(1), 
-        life: pokeApi.data.stats[0].base_stat,
-        attack: pokeApi.data.stats[1].base_stat,
-        defense: pokeApi.data.stats[2].base_stat,
-        speed: pokeApi.data.stats[5].base_stat,
-        height: pokeApi.data.height,
-        weight: pokeApi.data.weight,
+        name: pokeApi.data.name.charAt(0).toUpperCase() + pokeApi.data.name.slice(1),
         image: pokeApi.data.sprites.front_default,
         flagId: false,
         types: pokeApi.data.types.length > 0 ? pokeApi.data.types.map((obj) => obj.type.name) : []
@@ -83,7 +65,7 @@ router.get('/', async function(req, res, next){
         },
         include: {
           model: Type,
-            attributes: ['name'],
+          attributes: ['name'],
         }
       })
 
@@ -91,41 +73,36 @@ router.get('/', async function(req, res, next){
         let obj = {
           id: el.id,
           name: el.name.charAt(0).toUpperCase() + el.name.slice(1),
-          life: el.life,
-          attack: el.attack,
-          defense: el.defense,
-          speed: el.speed,
-          height: el.height,
-          weight: el.weight,
           image: el.image,
           flagId: flagId,
           types: el.Types.map((obj) => obj.name)
         }
-        return obj ;
+        return obj;
       })
 
       let pokes = [...pokemonApi, ...pokemonBd];
 
-      if(pokes.length > 0){
+      if (pokes.length > 0) {
         return res.json(pokes);
       }
-      else{
-        return res.status(404).send({message: 'Pokemon Not Found'})
+      else {
+        return res.next({ message: 'Pokemon Not Found', status: 400 })
       }
     }
   }
-  catch(error){
+  catch (error) {
     next(error)
   }
 });
 
-router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
-  const { flagId } = req.body;
+router.get('/:id/:flagId', async (req, res, next) => {
+  const { id, flagId } = req.params;
+  console.log("flagId", flagId)
+  if (!id) return res.next({ message: 'Id is require!', status: 500 });
+  if (flagId == "true") {
+    console.log("DB", flagId)
+    let poke = await Pokemon.findByPk(id, { include: [Type] })
 
-  if(!id) return res.next({message: 'Id is require!', status: 500});
-  if(flagId){
-    let poke = Pokemon.findByPk(id, {include: [Type]})
     let obj = {
       id: poke.id,
       name: poke.name,
@@ -137,17 +114,18 @@ router.get('/:id', async (req, res, next) => {
       weight: poke.weight,
       image: poke.image,
       flagId: flagId,
-      types: poke.Types.map((obj) => obj.name)
+      types: poke.Types?.map((obj) => obj.name)
     }
 
-    if(obj?.id) return res.json(obj);
-    return res.status(500).send({message: 'Pokemon not Found!'})
-  }else{
+    if (obj?.id) return res.json(obj);
+    return res.next({ message: 'Pokemon not Found!', status: 500 });
+  } else {
+    console.log("API", flagId, id, "https://pokeapi.co/api/v2/pokemon/" + id)
     let poke = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
-      
+
     let obj = {
       id: poke.data.id,
-      name: poke.data.name, 
+      name: poke.data.name,
       life: poke.data.stats[0].base_stat,
       attack: poke.data.stats[1].base_stat,
       defense: poke.data.stats[2].base_stat,
@@ -156,36 +134,39 @@ router.get('/:id', async (req, res, next) => {
       weight: poke.data.weight,
       image: poke.data.sprites.front_default,
       flagId: false,
-      types: poke.data.types.length > 0 ? pokeApi.data.types.map((obj) => obj.type.name) : []
+      types: poke.data.types.length > 0 ? poke.data.types.map((obj) => obj.type.name) : []
     }
 
-    if(obj?.id) return res.json(obj);
-    return res.next({message: 'Pokemon not Found!', status: 500});
+    if (obj?.id) return res.json(obj);
+    return res.next({ message: 'Pokemon not Found!', status: 500 });
   }
-
 });
 
 router.post('/', async (req, res, next) => {
-  const { name, life, attack, defense, speed, height, image, weight, sprite, types } = req.body;
+  const { name, life, attack, defense, speed, height, image, weight, types } = req.body;
 
-  try{
+  //Validation
+  // let poke;
+  // let flagPoke
+  // poke = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
+  // .then((obj) => {
+  //   if(obj.data.id > 0) return res.next({message: 'The Pokemon Already Exists!', status: 400})
+  // })
+  // .catch();
 
-    //Validation
-    let poke;
-    poke = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
-    if(poke.data?.id > 0)  return res.status(400).send({message: 'The Pokemon Already Exists!'})
-
-    poke = await Pokemon.findAll({
-      where: {
-        name: {
-          [Op.iLike]: `%${name}%`,
-        },
-      }
-    })
-    if(poke.length > 0) return res.status(400).send({message: 'The Pokemon Already Exists!'})
+  try {
+    // poke = await Pokemon.findAll({
+    //   where: {
+    //     name: {
+    //       [Op.iLike]: `%${name}%`,
+    //     },
+    //   }
+    // })
+    // if(poke.length > 0) return res.next({message: 'The Pokemon Already Exists!', status: 400})
 
     const newPoke = await Pokemon.create(
       {
+        id: uuidv4(),
         name,
         life,
         attack,
@@ -196,24 +177,21 @@ router.post('/', async (req, res, next) => {
         image,
         flagId: true,
       },
-      {fields: ["name", "life", "attack", "defense", "speed", "height", "weight", "image", "flagId"]}
+      { fields: ["id", "name", "life", "attack", "defense", "speed", "height", "weight", "image", "flagId"] }
     );
 
-    const listTypes = await Type.findAll({
-      where: { name: types }
-    });
-    newPoke.addType(listTypes);
+    let listTypes = await Promise.all(
+      types.map((el) =>
+        Type.findOne({ where: { name: el } })
+      )
+    )
 
-    // let listTypes = await Promise.all(
-    //   types.map((el) => 
-    //     Type.findOne({ where: { name: el } })
-    //   )
-    // )
-    // newPoke.setTypes(typesPok);
+    newPoke.setTypes(listTypes);
 
     res.status(200).json(newPoke);
-  } catch(error){
-    return res.status(400).send({message: 'Could not Create Pokemon!'})
+  } catch (error) {
+
+    return res.next({ message: 'Could not Create Pokemon!', status: 400 })
   }
 });
 

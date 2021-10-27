@@ -1,12 +1,28 @@
-.app-content{
+.app-content-sup {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  /* flex-wrap: wrap; */
   background-color: #e3e9ee;
   /* background-image: url("../../assets/images/fondo-nav.jpg"); */
 }
 
-.home-content{
+.app-content {
+  display: flex;
+  flex-direction: row;
+  /* flex-wrap: wrap; */
+  background-color: #e3e9ee;
+  /* background-image: url("../../assets/images/fondo-nav.jpg"); */
+}
+
+.home-content {
   display: block;
+  width: 100%;
   /* flex-wrap: wrap;
   background-image: url("../../assets/images/fondo-nav.jpg"); */
+}
+
+.abc {
+  display: flex;
+  justify-content: center;
+  align-content: center;
 }

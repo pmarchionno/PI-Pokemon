@@ -1,0 +1,50 @@
+.btn-content {
+  /* width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center; */
+
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.btn-page{
+  margin: 0px 10px;
+}
+
+.buttons {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.buttons img {
+  width: 70px;
+  height: 10px;
+  display: inline-block;
+  background: gray;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.buttons img::before {
+  content: url("https://assets-cdn.123rf.com/ui-components/assets/images/navright-icon.svg");
+  display: block;
+  margin: 13px 0;
+  transition: all ease-in-out 0.3s;
+}
+
+.buttons img::before:hover {
+  margin-left: -44px;
+}
+
+.buttons img::after {
+  content: "\f141";
+}

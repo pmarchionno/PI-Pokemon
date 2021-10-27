@@ -1,0 +1,14 @@
+.cards-content{
+  /* display: inline-block;
+  columns: 2;
+  width: 87%; */
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+}
+
+/* .cards-content:hover {
+  transform: scale(1.1);
+  border: 0px;
+} */

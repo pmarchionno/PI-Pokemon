@@ -1,11 +1,19 @@
-
+import { useDispatch } from 'react-redux';
+import { sortPokemons } from '../../actions';
+import './sort.css';
 
 const Sort = (props) => {
-  const {name, type, icon, BiIcons} = props;
+  const {name, category, orderType, icon} = props;
+  const dispatch = useDispatch();
+
+  function onClick(e){
+    e.preventDefault();
+    dispatch(sortPokemons({category: category, orderType: orderType}))
+  }
 
   return (
     <div>
-      {icon()} {name}
+      <button class="btn ejemplo1" onClick={(e) => onClick(e)}> {icon()}</button>  
     </div>
   )
 }

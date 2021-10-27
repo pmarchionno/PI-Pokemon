@@ -1,14 +1,23 @@
-import { GET_ALL_POKES, CREATE_POKE, SET_LOADING, SEARCH_POKE_BY_NAME, NOT_FOUND, GET_TYPES } from './typeActions';
+import { GET_ALL_POKES, CREATE_POKE, SET_LOADING, SEARCH_POKE_BY_NAME, SEARCH_POKE_BY_ID, NOT_FOUND, GET_TYPES, SORT_POKE } from './typeActions';
 import axios from 'axios';
+import { FcNext } from 'react-icons/fc';
 
 export function getAllPokemon() {
   return dispatch => {
-    return axios.get('http://localhost:3001/pokemon').then(obj => {
-      dispatch({
-        type: GET_ALL_POKES,
-        payload: obj.data
+    return axios.get('http://localhost:3001/pokemon')
+      .then(obj => {
+        dispatch({
+          type: GET_ALL_POKES,
+          payload: obj.data
+        })
       })
-    })
+      .catch(error => {
+        console.log("DOY ERROR")
+        return dispatch({
+          type: NOT_FOUND,
+          payload: error
+        })
+      })
   }
 }
 
@@ -22,6 +31,25 @@ export function getPokemonByName(name) {
       })
     } catch (error) {
       console.log(error)
+      // return dispatch({
+      //   type: NOT_FOUND,
+      //   payload: error
+      // })
+    }
+  }
+}
+
+export function getPokemonById(id, flagId = false) {
+  return async (dispatch) => {
+    try {
+      const poke = await axios.get(`http://localhost:3001/pokemon/${id}/${flagId}`)
+
+      return dispatch({
+        type: SEARCH_POKE_BY_ID,
+        payload: poke.data
+      })
+    } catch (error) {
+      console.log(error)
       return dispatch({
         type: NOT_FOUND,
         payload: error
@@ -30,7 +58,7 @@ export function getPokemonByName(name) {
   }
 }
 
-export function getPokemonTyes(){
+export function getPokemonTyes() {
   return async (dispatch) => {
     try {
       const types = await axios.get(`http://localhost:3001/types`)
@@ -55,3 +83,9 @@ export const setLoading = function (payload) {
   }
 }
 
+export const sortPokemons = function (payload) {
+  return {
+    type: SORT_POKE,
+    payload //{category, sortOrder}
+  }
+}

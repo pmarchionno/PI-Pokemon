@@ -3,7 +3,7 @@ body {
 }
 
 .box {
-  margin: 100px auto;
+  margin: 20px auto 0px auto;
   width: 300px;
   height: 50px;
 }
@@ -15,9 +15,13 @@ body {
   position: relative;
 }
 
+.container-1 input{
+  box-shadow: 3px 2px 5px 2px #d1d6d6;
+}
+
 .container-1 input#search {
   width: 300px;
-  /*height: 50px; */
+  height: 40px;
   background: #f1f3f4;
   border: none;
   font-size: 10pt;
@@ -34,11 +38,6 @@ body {
   -o-transition: background 0.55s ease;
   transition: background 0.55s ease;
 }
-
-/*
-.container-1 input#search::-webkit-input-placeholder {
-  color: #65737e;
-} */
 
 .container-1 input#search:-moz-placeholder {
   /* Firefox 18- */
@@ -64,7 +63,8 @@ body {
 
 .icon-faicons {
   position: absolute;
-  left: 10px
+  left: 10px;
+  border-radius: 50px;
 }
 
 .container-1 .icon {
@@ -81,7 +81,8 @@ body {
 
 .container-1 input#search:hover,
 .container-1 input#search:focus,
-.container-1 input#search:active {
+.container-1 input#search:active,
+.icon-faicons:hover {
   outline: none;
   background: #ffffff;
 }

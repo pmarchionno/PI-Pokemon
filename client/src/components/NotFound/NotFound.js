@@ -1,6 +1,6 @@
 import React from 'react'
 import './notFound.css'
-import pokeNotFound from '../../assets/images/miserable-cute.gif'
+import pokeNotFound from '../../assets/images/not-found.gif'
 
 const NotFound = () => {
   return (

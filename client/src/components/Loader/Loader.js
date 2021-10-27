@@ -1,6 +1,5 @@
-
 import ranPikachu from '../../assets/images/pikachuRuning.gif';
-
+import './loader.css';
 
 const Loader = () => {
   return (
