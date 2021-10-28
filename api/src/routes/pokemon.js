@@ -47,16 +47,22 @@ router.get('/', async function (req, res, next) {
 
       return res.json([...pokemonApi, ...pokemonBd]);
     } else {
-      let pokeApi = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+      let pokemonApi = [];
 
-      let pokemonApi = [{
-        id: pokeApi.data.id,
-        name: pokeApi.data.name.charAt(0).toUpperCase() + pokeApi.data.name.slice(1),
-        image: pokeApi.data.sprites.front_default,
-        flagId: false,
-        types: pokeApi.data.types.length > 0 ? pokeApi.data.types.map((obj) => obj.type.name) : []
-      }]
+      let pokeApi = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
+        .then((req) => {
+          console.log('AAAAAAA req', req)
+          pokemonApi = [{
+            id: req.data.id,
+            name: req.data.name.charAt(0).toUpperCase() + req.data.name.slice(1),
+            image: req.data.sprites.front_default,
+            flagId: false,
+            types: req.data.types.length > 0 ? req.data.types.map((obj) => obj.type.name) : []
+          }]
+        })
+        .catch((err) => pokemonApi = [] );
 
+      
       let pokeDb = await Pokemon.findAll({
         where: {
           name: {
@@ -74,19 +80,19 @@ router.get('/', async function (req, res, next) {
           id: el.id,
           name: el.name.charAt(0).toUpperCase() + el.name.slice(1),
           image: el.image,
-          flagId: flagId,
+          flagId: el. flagId,
           types: el.Types.map((obj) => obj.name)
         }
         return obj;
       })
 
       let pokes = [...pokemonApi, ...pokemonBd];
-
+      console.log('BBBBBBB', pokeDb)
       if (pokes.length > 0) {
         return res.json(pokes);
       }
       else {
-        return res.next({ message: 'Pokemon Not Found', status: 400 })
+        return next({ message: 'Pokemon Not Found', status: 400 })
       }
     }
   }
@@ -97,30 +103,32 @@ router.get('/', async function (req, res, next) {
 
 router.get('/:id/:flagId', async (req, res, next) => {
   const { id, flagId } = req.params;
-  console.log("flagId", flagId)
-  if (!id) return res.next({ message: 'Id is require!', status: 500 });
+  console.log("Id - flagId", id, flagId)
+  if (!id) return next({ message: 'Id is require!', status: 500 });
   if (flagId == "true") {
-    console.log("DB", flagId)
-    let poke = await Pokemon.findByPk(id, { include: [Type] })
-
-    let obj = {
-      id: poke.id,
-      name: poke.name,
-      life: poke.life,
-      attack: poke.attack,
-      defense: poke.defense,
-      speed: poke.speed,
-      height: poke.height,
-      weight: poke.weight,
-      image: poke.image,
-      flagId: flagId,
-      types: poke.Types?.map((obj) => obj.name)
+    try{
+      let poke = await Pokemon.findByPk(id, { include: [Type] })
+      console.log("Poke", poke)
+      let obj = {
+        id: poke.id,
+        name: poke.name,
+        life: poke.life,
+        attack: poke.attack,
+        defense: poke.defense,
+        speed: poke.speed,
+        height: poke.height,
+        weight: poke.weight,
+        image: poke.image,
+        flagId: flagId,
+        types: poke.Types?.map((obj) => obj.name)
+      }
+      console.log("ONJETO", obj)
+      return res.json(obj);
+    }catch{
+      return next({ message: 'Pokemon not Found!', status: 500 });
     }
-
-    if (obj?.id) return res.json(obj);
-    return res.next({ message: 'Pokemon not Found!', status: 500 });
   } else {
-    console.log("API", flagId, id, "https://pokeapi.co/api/v2/pokemon/" + id)
+    // console.log("API", flagId, id, "https://pokeapi.co/api/v2/pokemon/" + id)
     let poke = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
 
     let obj = {
@@ -138,32 +146,15 @@ router.get('/:id/:flagId', async (req, res, next) => {
     }
 
     if (obj?.id) return res.json(obj);
-    return res.next({ message: 'Pokemon not Found!', status: 500 });
+    return next({ message: 'Pokemon not Found!', status: 500 });
   }
 });
 
 router.post('/', async (req, res, next) => {
   const { name, life, attack, defense, speed, height, image, weight, types } = req.body;
 
-  //Validation
-  // let poke;
-  // let flagPoke
-  // poke = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
-  // .then((obj) => {
-  //   if(obj.data.id > 0) return res.next({message: 'The Pokemon Already Exists!', status: 400})
-  // })
-  // .catch();
-
+  console.log("req.body", req.body)
   try {
-    // poke = await Pokemon.findAll({
-    //   where: {
-    //     name: {
-    //       [Op.iLike]: `%${name}%`,
-    //     },
-    //   }
-    // })
-    // if(poke.length > 0) return res.next({message: 'The Pokemon Already Exists!', status: 400})
-
     const newPoke = await Pokemon.create(
       {
         id: uuidv4(),
@@ -191,7 +182,7 @@ router.post('/', async (req, res, next) => {
     res.status(200).json(newPoke);
   } catch (error) {
 
-    return res.next({ message: 'Could not Create Pokemon!', status: 400 })
+    return next({ message: 'Could not Create Pokemon!', status: 400 })
   }
 });
 

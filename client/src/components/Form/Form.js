@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { getPokemonTyes } from "../../actions";
 
-import {Formulario, Label, ContenedorTerminos, ContenedorBotonCentrado, Boton, MensajeExito, MensajeError} from './Formularios';
+import { Formulario, Label, ContenedorTerminos, ContenedorBotonCentrado, Boton, MensajeExito, MensajeError } from './Formularios';
 import Input from './Input';
 
 // import './form.css';
@@ -106,216 +106,202 @@ const Form = (props) => {
     }
   };
 
-  const [usuario, cambiarUsuario] = useState({campo: '', valido: null});
-	const [nombre, cambiarNombre] = useState({campo: '', valido: null});
-	const [password, cambiarPassword] = useState({campo: '', valido: null});
-	const [password2, cambiarPassword2] = useState({campo: '', valido: null});
-	const [correo, cambiarCorreo] = useState({campo: '', valido: null});
-	const [telefono, cambiarTelefono] = useState({campo: '', valido: null});
-	const [terminos, cambiarTerminos] = useState(false);
-	const [formularioValido, cambiarFormularioValido] = useState(null);
+  const [name, cambiarName] = useState({ campo: '', valido: null });
+  const [life, cambiarLife] = useState({ campo: '', valido: null });
+  const [attack, cambiarAttack] = useState({ campo: '', valido: null });
+  const [defense, cambiarDefense] = useState({ campo: '', valido: null });
+  const [speed, cambiarSpeed] = useState({ campo: '', valido: null });
+  const [height, cambiarHeight] = useState({ campo: '', valido: null });
+  const [weight, cambiarWeight] = useState({ campo: '', valido: null });
+  const [image, cambiarImage] = useState({ campo: 'https://images4.alphacoders.com/641/641968.jpg', valido: null });
+  const [type1, cambiarType1] = useState({ campo: '', valido: null });
+  const [type2, cambiarType2] = useState({ campo: '', valido: null });
+  const [terminos, cambiarTerminos] = useState(false);
+  const [formularioValido, cambiarFormularioValido] = useState(null);
 
   const expresiones = {
-		usuario: /^[a-zA-Z0-9_-]{4,16}$/, // Letras, numeros, guion y guion_bajo
-		nombre: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-		password: /^.{4,12}$/, // 4 a 12 digitos.
-		correo: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-		telefono: /^\d{7,14}$/ // 7 a 14 numeros.
-	}
+    name: /^[a-zA-Z0-9_-]{1,16}$/, // Letras, numeros, guion y guion_bajo
+    onlyNumbers: /^[0-9\b]+$/, //Nùmeros
+    life: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
+    defense: /^.{4,12}$/, // 4 a 12 digitos.
+    height: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    attack: /^\d{7,14}$/ // 7 a 14 numeros.
+  }
 
   const onChangeTerminos = (e) => {
-		cambiarTerminos(e.target.checked);
-	}
+    cambiarTerminos(e.target.checked);
+  }
 
-  const validarPassword2 = () => {
-		if(password.campo.length > 0){
-			if(password.campo !== password2.campo){
-				cambiarPassword2((prevState) => {
-					return {...prevState, valido: 'false'}
-				});
-			} else {
-				cambiarPassword2((prevState) => {
-					return {...prevState, valido: 'true'}
-				});
-			}
-		}
-	}
+  const valitionTypes = () => {
+    let type = [].concat(type1.campo);
+    if (type2.campo.length > 0) {
+      type = type.concat(type2.campo)
+    } else {
+      if (input.type1.length > 0) { type = type.concat(input.type1); }
+    }
+  }
 
-  const onSubmit = (e) => {
-		e.preventDefault();
+  async function onSubmit(e){
+    e.preventDefault();
+    
+    let input = {
+      name: name.campo,
+      life: life.campo,
+      attack: attack.campo,
+      defense: defense.campo,
+      speed: speed.campo,
+      height: height.campo,
+      weight: weight.campo,
+      image: image.campo,
+      types: [].concat(type1.campo).concat(type2.campo)
+    }
 
-		if(
-			usuario.valido === 'true' &&
-			nombre.valido === 'true' &&
-			password.valido === 'true' &&
-			password2.valido === 'true' &&
-			correo.valido === 'true' &&
-			telefono.valido === 'true' &&
-			terminos
-		){
-			cambiarFormularioValido(true);
-			cambiarUsuario({campo: '', valido: ''});
-			cambiarNombre({campo: '', valido: null});
-			cambiarPassword({campo: '', valido: null});
-			cambiarPassword2({campo: '', valido: 'null'});
-			cambiarCorreo({campo: '', valido: null});
-			cambiarTelefono({campo: '', valido: null});
+    console.log('EJECUTO FUNCION', type1.campo, type2.campo, input)
 
-			// ... 
-		} else {
-			cambiarFormularioValido(false);
-		}
-	}
+    axios.post('http://localhost:3001/pokemon', input);
+
+    if (
+      name.valido === 'true' &&
+      life.valido === 'true' &&
+      attack.valido === 'true' &&
+      defense.valido === 'true' &&
+      speed.valido === 'true' &&
+      height.valido === 'true' &&
+      weight.valido === 'true' &&
+      (type1.valido === 'true' ||
+        type2.valido === 'true')
+      // &&terminos
+    ) {
+      console.log('TODO TRUE')
+      cambiarFormularioValido(true);
+      cambiarName({ campo: '', valido: '' });
+      cambiarLife({ campo: '', valido: null });
+      cambiarAttack({ campo: '', valido: null });
+      cambiarDefense({ campo: '', valido: null });
+      cambiarSpeed({ campo: '', valido: null });
+      cambiarHeight({ campo: '', valido: null });
+      cambiarWeight({ campo: '', valido: null });
+      cambiarImage({ campo: '', valido: null });
+      cambiarType1({ campo: '', valido: null });
+      cambiarType2({ campo: '', valido: null });
+
+      // ... 
+    } else {
+      console.log('ALGO FALSE')
+      cambiarFormularioValido(false);
+    }
+  }
 
   return (
-    <Formulario action="" onSubmit={onSubmit}>
-				<Input
-					estado={usuario}
-					cambiarEstado={cambiarUsuario}
-					tipo="text"
-					label="Usuario"
-					placeholder="john123"
-					name="usuario"
-					leyendaError="El usuario tiene que ser de 4 a 16 dígitos y solo puede contener numeros, letras y guion bajo."
-					expresionRegular={expresiones.usuario}
-				/>
-				<Input
-					estado={nombre}
-					cambiarEstado={cambiarNombre}
-					tipo="text"
-					label="Nombre"
-					placeholder="John Doe"
-					name="usuario"
-					leyendaError="El nombre solo puede contener letras y espacios."
-					expresionRegular={expresiones.nombre}
-				/>
-				<Input
-					estado={password}
-					cambiarEstado={cambiarPassword}
-					tipo="password"
-					label="Contraseña"
-					name="password1"
-					leyendaError="La contraseña tiene que ser de 4 a 12 dígitos."
-					expresionRegular={expresiones.password}
-				/>
-				<Input
-					estado={password2}
-					cambiarEstado={cambiarPassword2}
-					tipo="password"
-					label="Repetir Contraseña"
-					name="password2"
-					leyendaError="Ambas contraseñas deben ser iguales."
-					funcion={validarPassword2}
-				/>
-				<Input
-					estado={correo}
-					cambiarEstado={cambiarCorreo}
-					tipo="email"
-					label="Correo Electrónico"
-					placeholder="john@correo.com"
-					name="correo"
-					leyendaError="El correo solo puede contener letras, numeros, puntos, guiones y guion bajo."
-					expresionRegular={expresiones.correo}
-				/>
-				<Input
-					estado={telefono}
-					cambiarEstado={cambiarTelefono}
-					tipo="text"
-					label="Teléfono"
-					placeholder="4491234567"
-					name="telefono"
-					leyendaError="El telefono solo puede contener numeros y el maximo son 14 dígitos."
-					expresionRegular={expresiones.telefono}
-				/>
+    <div background-image={`url(${image.campo})`}>
 
+      <Formulario action="" onSubmit={onSubmit} >
+        <Input
+          estado={name}
+          cambiarEstado={cambiarName}
+          tipo="text"
+          label="Name"
+          placeholder="name"
+          name="name"
+          leyendaError="The Name field must be 1 to 16 characters long and can only contain numbers, letters, and underscores."
+          expresionRegular={expresiones.name}
+        />
+        <Input
+          estado={life}
+          cambiarEstado={cambiarLife}
+          tipo="number"
+          label="Life"
+          placeholder="Life"
+          name="life"
+          leyendaError="The Life field is required and must contain only numbers."
+          expresionRegular={expresiones.onlyNumbers}
+        />
+        <Input
+          estado={attack}
+          cambiarEstado={cambiarAttack}
+          tipo="number"
+          label="Attack"
+          placeholder="Attack"
+          name="attack"
+          leyendaError="The Attack field is required and must contain only numbers."
+          expresionRegular={expresiones.atonlyNumberstack}
+        />
+        <Input
+          estado={defense}
+          cambiarEstado={cambiarDefense}
+          tipo="number"
+          label="Defense"
+          placeholder="Defense"
+          name="defense"
+          leyendaError="The Defense field is required and must contain only numbers."
+          expresionRegular={expresiones.onlyNumbers}
+        />
+        <Input
+          estado={speed}
+          cambiarEstado={cambiarSpeed}
+          tipo="number"
+          label="Speed"
+          placeholder="Speed"
+          name="speed"
+          leyendaError="The Speed field is required and must contain only numbers."
+          expresionRegular={expresiones.onlyNumbers}
+        />
+        <Input
+          estado={height}
+          cambiarEstado={cambiarHeight}
+          tipo="number"
+          label="Height"
+          placeholder="Height"
+          name="height"
+          leyendaError="The Height field is required and must contain only numbers."
+          expresionRegular={expresiones.onlyNumbers}
+        />
+        <Input
+          estado={weight}
+          cambiarEstado={cambiarWeight}
+          tipo="number"
+          label="Weight"
+          placeholder="Weight"
+          name="weight"
+          leyendaError="The Weight field is required and must contain only numbers."
+          expresionRegular={expresiones.onlyNumbers}
+        />
+        <Input
+          estado={image}
+          cambiarEstado={cambiarImage}
+          tipo="text"
+          label="Image"
+          placeholder="Image"
+          name="image"
+          leyendaError="The Image field is required and must contain only numbers."
+        />
+        <Input
+          estado={type1}
+          cambiarEstado={cambiarType1}
+          tipo="text"
+          label="Type 1"
+          placeholder="Type 1"
+          name="type1"
+          leyendaError="The Type 1 or Type 2 field is required and must contain only numbers."
+          funcion={valitionTypes}
+        />
+        <Input
+          estado={type2}
+          cambiarEstado={cambiarType2}
+          tipo="text"
+          label="Type 2"
+          placeholder="Type 2"
+          name="type2"
+          leyendaError="The Type 1 or Type 2 field is required and must contain only numbers."
+          funcion={valitionTypes}
+        />
 
-
-				<ContenedorTerminos>
-					<Label>
-						<input 
-							type="checkbox"
-							name="terminos"
-							id="terminos"
-							checked={terminos} 
-							onChange={onChangeTerminos}
-						/>
-						Acepto los Terminos y Condiciones
-					</Label>
-				</ContenedorTerminos>
-				{/* {formularioValido === false && <MensajeError>
-					<p>
-						<FontAwesomeIcon icon={FcHighPriority}/>
-						<b>Error:</b> Por favor rellena el formulario correctamente.
-					</p>
-				</MensajeError>} */}
-				<ContenedorBotonCentrado>
-					<Boton type="submit">Enviar</Boton>
-					{formularioValido === true && <MensajeExito>Formulario enviado exitosamente!</MensajeExito>}
-				</ContenedorBotonCentrado>
-			</Formulario>
-
-    // <div className='style-component'>
-    //   <label id='222'>Label</label>
-    //   <form className="form" onSubmit={submit}>
-
-    //     <div className='component-input'>
-    //       <label for='name'>Name</label>
-    //       <div className='component-input-group'>
-    //         <input
-    //           id={"form__" + `${input.name}`}
-    //           type="text"
-    //           name='name'
-    //           value={input.name}
-    //           placeholder='Name'
-    //           className={!error.name ? '' : 'border-error'}
-    //           onChange={(e) => handleInputChange(e)}
-    //           onBlur={(e) => validate(e)}
-    //           required
-    //         />
-    //         <div className='component-icon'> {FcIcons.FcCheckmark()}</div>
-    //         //icon={estado.valido === 'true' ? faCheckCircle : faTimesCircle}
-		// 			//valido={estado.valido}
-    //       </div>
-    //       {!error.name ? null : <span className='component-input-error'>{error.name}</span>}
-    //     </div>
-
-    //     <div className='component-input'>
-    //       <label for='life'>Life</label>
-    //       <div className='component-input-group'>
-    //         <input
-    //           id={"form__" + `${input.life}`}
-    //           type="text"
-    //           name='life'
-    //           value={input.life}
-    //           placeholder='Life'
-    //           className={!error.life ? '' : 'border-error'}
-    //           onChange={(e) => handleInputChange(e)}
-    //           onBlur={(e) => validate(e)}
-    //           required
-    //         />
-    //         <div> {FcIcons.FcCheckmark()}</div>
-    //       </div>
-    //       {!error.life ? null : <span className='component-input-error'>{error.life}</span>}
-    //     </div>
-
-
-    //     <button
-    //       className={
-    //         ( input.name === "" ||
-    //           input.life === "" ||
-    //           input.attack === "" ||
-    //           input.defense === "" ||
-    //           input.speed === "" ||
-    //           input.height === "" ||
-    //           input.weight === "" ||
-    //           ( input.type1 === "" &&
-    //           input.type2 === "" ) )
-    //           ? 'button-disable'
-    //           : 'button'
-    //       }
-    //     >Create</button>
-    //   </form>
-    // </div>
+        <ContenedorBotonCentrado>
+          <Boton type="submit">Create Pokémon</Boton>
+          {formularioValido === true && <MensajeExito>Formulario enviado exitosamente!</MensajeExito>}
+        </ContenedorBotonCentrado>
+      </Formulario>
+    </div>
   )
 }
 

@@ -31,10 +31,10 @@ export function getPokemonByName(name) {
       })
     } catch (error) {
       console.log(error)
-      // return dispatch({
-      //   type: NOT_FOUND,
-      //   payload: error
-      // })
+      return dispatch({
+        type: SEARCH_POKE_BY_NAME,
+        payload: []
+      })
     }
   }
 }

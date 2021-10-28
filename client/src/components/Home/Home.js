@@ -91,7 +91,7 @@ const Home = () => {
           </div>
           {loading
             ? <Loader />
-            : pokeNotFound
+            : showSearch && listFiltered?.length <= 0
               ? <NotFound />
               : <Cards
                 listToDraw={pagination()} />

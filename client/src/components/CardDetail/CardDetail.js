@@ -13,12 +13,13 @@ const CardDetail = () => {
   const pokeDetail = useSelector(state => state.pokeDetail);
 
   useEffect(() => {
+    console.log('IDIDID:', id)
     dispatch(getPokemonById(id, flagId))
   }, [])
 
   return (
     <div>
-      {pokeDetail["id"] > 0
+      {pokeDetail["id"]
       ?
 
       <div id="cards">
@@ -32,7 +33,7 @@ const CardDetail = () => {
             <h1 class="card__name">{pokeDetail.name.charAt(0).toUpperCase() + pokeDetail.name.slice(1)}</h1>
 
             <h3 class="card__type">
-              normal
+              Id: {pokeDetail.id}
             </h3>
 
             <table class="card__stats">

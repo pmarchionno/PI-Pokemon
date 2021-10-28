@@ -1,4 +1,4 @@
-import styled, {css} from 'styled-components';
+import styled, { css } from 'styled-components';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FcCheckmark, FcCancel } from 'react-icons/fc';
 const colores = {
@@ -11,6 +11,14 @@ const Formulario = styled.form`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 20px;
+
+	width: 70%;
+	left: 15%;
+	position: absolute;
+
+	${props => props.valido === 'false' && css`
+		color: ${colores.error};
+	`}
 
 	@media (max-width: 800px){
 		grid-template-columns: 1fr;
@@ -76,21 +84,21 @@ const LeyendaError = styled.p`
 
 const IconoValidacion = styled(FcCheckmark)`
 	position: absolute;
-	// right: 10px;
-	// bottom: 14px;
-	// z-index: 100;
-	// font-size: 16px;
-	// opacity: 0;
+	right: 10px;
+	bottom: 14px;
+	z-index: 100;
+	font-size: 16px;
+	opacity: 0;
 
-	// ${props => props.valido === 'false' && css`
-	// 	opacity: 1;
-	// 	color: ${colores.error};
-	// `}
+	${props => props.valido === 'false' && css`
+		opacity: 0;
+	 	color: ${colores.error};
+	`}
 
-	// ${props => props.valido === 'true' && css`
-	// 	opacity: 1;
-	// 	color: ${colores.exito};
-	// `}
+	${props => props.valido === 'true' && css`
+		opacity: 1;
+		color: ${colores.exito};
+	`}
 `;
 
 const ContenedorTerminos = styled.div`
