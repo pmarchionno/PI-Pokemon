@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FcCheckmark, FcCancel } from 'react-icons/fc';
 const colores = {
 	borde: "#0075FF",
@@ -43,6 +42,36 @@ const GrupoInput = styled.div`
 `;
 
 const Input = styled.input`
+	width: 100%;
+	background: #fff;
+	border-radius: 3px;
+	height: 45px;
+	line-height: 45px;
+	padding: 0 40px 0 10px;
+	transition: .3s ease all;
+	border: 3px solid transparent;
+
+	&:focus {
+		border: 3px solid ${colores.borde};
+		outline: none;
+		box-shadow: 3px 0px 30px rgba(163,163,163, 0.4);
+	}
+
+	${props => props.valido === 'true' && css`
+		border: 3px solid transparent;
+	`}
+
+	${props => props.valido === 'false' && css`
+		border: 3px solid ${colores.error} !important;
+	`}
+`;
+
+const GrupoSelect = styled.div`
+	position: relative;
+	z-index: 90;
+`;
+
+const Select = styled.select`
 	width: 100%;
 	background: #fff;
 	border-radius: 3px;
@@ -136,6 +165,14 @@ const Boton = styled.button`
 	cursor: pointer;
 	transition: .1s ease all;
 
+	${props => props.formularioValido === 'false' && css`
+		color: ${colores.error};
+	`}
+
+	${props => props.formularioValido === 'false' && css`
+		color: ${colores.error};
+	`}
+	
 	&:hover {
 		box-shadow: 3px 0px 30px rgba(163,163,163, 1);
 	}
@@ -166,6 +203,8 @@ export {
 	Label,
 	GrupoInput,
 	Input,
+	GrupoSelect,
+	Select,
 	LeyendaError,
 	IconoValidacion,
 	ContenedorTerminos,

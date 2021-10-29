@@ -2,6 +2,24 @@ import { GET_ALL_POKES, CREATE_POKE, SET_LOADING, SEARCH_POKE_BY_NAME, SEARCH_PO
 import axios from 'axios';
 import { FcNext } from 'react-icons/fc';
 
+export function addPokemon(objPoke){
+  return dispatch => {
+    return axios.post('http://localhost:3001/pokemon', objPoke)
+      .then(obj => {
+        dispatch({
+          type: CREATE_POKE,
+          payload: obj.data
+        })
+      })
+      .catch(error => {
+        return dispatch({
+          type: NOT_FOUND,
+          payload: error
+        })
+      })
+  }
+  
+}
 export function getAllPokemon() {
   return dispatch => {
     return axios.get('http://localhost:3001/pokemon')
@@ -12,7 +30,6 @@ export function getAllPokemon() {
         })
       })
       .catch(error => {
-        console.log("DOY ERROR")
         return dispatch({
           type: NOT_FOUND,
           payload: error
@@ -30,7 +47,6 @@ export function getPokemonByName(name) {
         payload: poke.data
       })
     } catch (error) {
-      console.log(error)
       return dispatch({
         type: SEARCH_POKE_BY_NAME,
         payload: []
@@ -49,7 +65,6 @@ export function getPokemonById(id, flagId = false) {
         payload: poke.data
       })
     } catch (error) {
-      console.log(error)
       return dispatch({
         type: NOT_FOUND,
         payload: error
@@ -67,7 +82,6 @@ export function getPokemonTyes() {
         payload: types.data
       })
     } catch (error) {
-      console.log(error)
       return dispatch({
         type: NOT_FOUND,
         payload: error

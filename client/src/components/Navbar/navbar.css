@@ -6,6 +6,9 @@
   width: 100%;
   float: left;
   height: 62px;
+  display: flex;
+  flex-direction: inherit;
+  justify-content: center;
 }
 
 .menu ul li {
@@ -18,7 +21,7 @@
   padding: 10px;
 }
 
-.list{
+.list {
   display: flex;
   flex-direction: row;
   float: right;

@@ -1,4 +1,4 @@
-import { GET_ALL_POKES, GET_TYPES, SET_LOADING, SEARCH_POKE_BY_NAME, SEARCH_POKE_BY_ID, NOT_FOUND, SORT_POKE } from '../actions/typeActions';
+import { GET_ALL_POKES, GET_TYPES, SET_LOADING, SEARCH_POKE_BY_NAME, SEARCH_POKE_BY_ID, NOT_FOUND, SORT_POKE, CREATE_POKE } from '../actions/typeActions';
 
 const initialState = {
   pokemonList: [],
@@ -32,7 +32,8 @@ const pokemon = (state = initialState, action) => {
     case SEARCH_POKE_BY_ID:
       return {
         ...state,
-        pokeDetail: action.payload
+        pokeDetail: action.payload,
+        loading: false
       }
     case GET_TYPES:
       return {
@@ -47,22 +48,25 @@ const pokemon = (state = initialState, action) => {
     case SORT_POKE:
       const { category, orderType } = action.payload;
       let order = orderType === 'asc' ? 1 : -1;
-      console.log('Reducer', category, orderType, order, action.payload)
+      
       if (category === 'name') {
-        console.log('Reducer por Name',  order)
         return {
           ...state,
           pokemonList: [...state.pokemonList].sort((a, b) => (a[category].toLowerCase() > b[category].toLowerCase()) ? order : order * (-1)),
           pokemonFiltered: [...state.pokemonFiltered].sort((a, b) => (a[category].toLowerCase() > b[category].toLowerCase()) ? order : order * (-1))
         }
       }else{
-        console.log('Reducer por Fuerza',  order, category)
         return {
           ...state,
-          pokemonList: [...state.pokemonList].sort((a, b) => ((a[category]) > b[category]) ? order : order * (-1)),
+          pokemonList: [...state.pokemonList].sort((a, b) => (((a[category] == b[category]) && (a['name'].toLowerCase() > b['name'].toLowerCase())) || (a[category] > b[category])) ? order : order * (-1)),
           pokemonFiltered: [...state.pokemonFiltered].sort((a, b) => (a[category] > b[category]) ? order : order * (-1))
         }
       }
+      case CREATE_POKE:
+        return {
+          ...state,
+          pokemonList: [...state.pokemonList, action.payload],
+        };
     default: return state
   }
 }

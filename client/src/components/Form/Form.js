@@ -1,25 +1,15 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { getPokemonTyes } from "../../actions";
+import { addPokemon, getPokemonTyes } from "../../actions";
+import './form.css';
 
-import { Formulario, Label, ContenedorTerminos, ContenedorBotonCentrado, Boton, MensajeExito, MensajeError } from './Formularios';
-import Input from './Input';
-
-// import './form.css';
-import * as FcIcons from 'react-icons/fc';
-import { validText, validNumber } from './validations';
-
-// import imgDefault from '../../images/dog.png'
-
-const Form = (props) => {
+export function Form(props) {
   const dispatch = useDispatch();
+  const listTypes = useSelector((state) => state.pokemonTypes);
 
-  useEffect(() => {
-    dispatch(getPokemonTyes())
-  }, [dispatch])
-
-  const typeList = useSelector((state) => state.pokemonTypes);
+  // useEffect(() => {
+  //   dispatch(getPokemonTyes())
+  // }, [dispatch])
 
   const [input, setInput] = useState(
     {
@@ -51,23 +41,37 @@ const Form = (props) => {
     types: []
   });
 
-  function validate(e) {
-    const { name, value } = e.target;
-
-    let inputName = name.charAt(0).toUpperCase() + name.slice(1);
-
-    if (input[name] === "") {
-      setError({ ...error, [name]: `the ${inputName} field is required` });
+  function validate(el) {
+    if (input[el] === "") {
+      let inputName = el.charAt(0).toUpperCase() + el.slice(1)
+      setError({ ...error, [el]: `The ${inputName} field is required` });
+    } else {
+      setError({ ...error, [el]: "" });
     }
   }
 
-  async function submit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    axios.post('http://localhost:3001/pokemon', input);
-    window.alert("Hello world!");
+    dispatch(addPokemon(input));
+    await window.alert("The Pokémon has been created!")
+    .then(window.location.href = "/");
   }
 
-  const handleInputChange = (e) => {
+  const onChange = (e) => {
+    // const target = e.target;
+    // const regexName = /^[A-Za-z]+$/;
+    // if (e.target.name === 'temperament') {
+    //   setInput({
+    //     ...input,
+    //     [e.target.name]: [...input.temperament, e.target.value]
+    //   }); 
+    // } else {
+    //   setInput({
+    //     ...input,
+    //     [e.target.name]: e.target.value
+    //   })
+    // }
+
     const nameEvent = e.target.name;
 
     let type = [];
@@ -106,201 +110,238 @@ const Form = (props) => {
     }
   };
 
-  const [name, cambiarName] = useState({ campo: '', valido: null });
-  const [life, cambiarLife] = useState({ campo: '', valido: null });
-  const [attack, cambiarAttack] = useState({ campo: '', valido: null });
-  const [defense, cambiarDefense] = useState({ campo: '', valido: null });
-  const [speed, cambiarSpeed] = useState({ campo: '', valido: null });
-  const [height, cambiarHeight] = useState({ campo: '', valido: null });
-  const [weight, cambiarWeight] = useState({ campo: '', valido: null });
-  const [image, cambiarImage] = useState({ campo: 'https://images4.alphacoders.com/641/641968.jpg', valido: null });
-  const [type1, cambiarType1] = useState({ campo: '', valido: null });
-  const [type2, cambiarType2] = useState({ campo: '', valido: null });
-  const [terminos, cambiarTerminos] = useState(false);
-  const [formularioValido, cambiarFormularioValido] = useState(null);
-
-  const expresiones = {
-    name: /^[a-zA-Z0-9_-]{1,16}$/, // Letras, numeros, guion y guion_bajo
-    onlyNumbers: /^[0-9\b]+$/, //Nùmeros
-    life: /^[a-zA-ZÀ-ÿ\s]{1,40}$/, // Letras y espacios, pueden llevar acentos.
-    defense: /^.{4,12}$/, // 4 a 12 digitos.
-    height: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-    attack: /^\d{7,14}$/ // 7 a 14 numeros.
-  }
-
-  const onChangeTerminos = (e) => {
-    cambiarTerminos(e.target.checked);
-  }
-
-  const valitionTypes = () => {
-    let type = [].concat(type1.campo);
-    if (type2.campo.length > 0) {
-      type = type.concat(type2.campo)
-    } else {
-      if (input.type1.length > 0) { type = type.concat(input.type1); }
-    }
-  }
-
-  async function onSubmit(e){
-    e.preventDefault();
-    
-    let input = {
-      name: name.campo,
-      life: life.campo,
-      attack: attack.campo,
-      defense: defense.campo,
-      speed: speed.campo,
-      height: height.campo,
-      weight: weight.campo,
-      image: image.campo,
-      types: [].concat(type1.campo).concat(type2.campo)
-    }
-
-    console.log('EJECUTO FUNCION', type1.campo, type2.campo, input)
-
-    axios.post('http://localhost:3001/pokemon', input);
-
-    if (
-      name.valido === 'true' &&
-      life.valido === 'true' &&
-      attack.valido === 'true' &&
-      defense.valido === 'true' &&
-      speed.valido === 'true' &&
-      height.valido === 'true' &&
-      weight.valido === 'true' &&
-      (type1.valido === 'true' ||
-        type2.valido === 'true')
-      // &&terminos
-    ) {
-      console.log('TODO TRUE')
-      cambiarFormularioValido(true);
-      cambiarName({ campo: '', valido: '' });
-      cambiarLife({ campo: '', valido: null });
-      cambiarAttack({ campo: '', valido: null });
-      cambiarDefense({ campo: '', valido: null });
-      cambiarSpeed({ campo: '', valido: null });
-      cambiarHeight({ campo: '', valido: null });
-      cambiarWeight({ campo: '', valido: null });
-      cambiarImage({ campo: '', valido: null });
-      cambiarType1({ campo: '', valido: null });
-      cambiarType2({ campo: '', valido: null });
-
-      // ... 
-    } else {
-      console.log('ALGO FALSE')
-      cambiarFormularioValido(false);
-    }
-  }
-
   return (
-    <div background-image={`url(${image.campo})`}>
+    <div className='style-form'>
 
-      <Formulario action="" onSubmit={onSubmit} >
-        <Input
-          estado={name}
-          cambiarEstado={cambiarName}
-          tipo="text"
-          label="Name"
-          placeholder="name"
-          name="name"
-          leyendaError="The Name field must be 1 to 16 characters long and can only contain numbers, letters, and underscores."
-          expresionRegular={expresiones.name}
-        />
-        <Input
-          estado={life}
-          cambiarEstado={cambiarLife}
-          tipo="number"
-          label="Life"
-          placeholder="Life"
-          name="life"
-          leyendaError="The Life field is required and must contain only numbers."
-          expresionRegular={expresiones.onlyNumbers}
-        />
-        <Input
-          estado={attack}
-          cambiarEstado={cambiarAttack}
-          tipo="number"
-          label="Attack"
-          placeholder="Attack"
-          name="attack"
-          leyendaError="The Attack field is required and must contain only numbers."
-          expresionRegular={expresiones.atonlyNumberstack}
-        />
-        <Input
-          estado={defense}
-          cambiarEstado={cambiarDefense}
-          tipo="number"
-          label="Defense"
-          placeholder="Defense"
-          name="defense"
-          leyendaError="The Defense field is required and must contain only numbers."
-          expresionRegular={expresiones.onlyNumbers}
-        />
-        <Input
-          estado={speed}
-          cambiarEstado={cambiarSpeed}
-          tipo="number"
-          label="Speed"
-          placeholder="Speed"
-          name="speed"
-          leyendaError="The Speed field is required and must contain only numbers."
-          expresionRegular={expresiones.onlyNumbers}
-        />
-        <Input
-          estado={height}
-          cambiarEstado={cambiarHeight}
-          tipo="number"
-          label="Height"
-          placeholder="Height"
-          name="height"
-          leyendaError="The Height field is required and must contain only numbers."
-          expresionRegular={expresiones.onlyNumbers}
-        />
-        <Input
-          estado={weight}
-          cambiarEstado={cambiarWeight}
-          tipo="number"
-          label="Weight"
-          placeholder="Weight"
-          name="weight"
-          leyendaError="The Weight field is required and must contain only numbers."
-          expresionRegular={expresiones.onlyNumbers}
-        />
-        <Input
-          estado={image}
-          cambiarEstado={cambiarImage}
-          tipo="text"
-          label="Image"
-          placeholder="Image"
-          name="image"
-          leyendaError="The Image field is required and must contain only numbers."
-        />
-        <Input
-          estado={type1}
-          cambiarEstado={cambiarType1}
-          tipo="text"
-          label="Type 1"
-          placeholder="Type 1"
-          name="type1"
-          leyendaError="The Type 1 or Type 2 field is required and must contain only numbers."
-          funcion={valitionTypes}
-        />
-        <Input
-          estado={type2}
-          cambiarEstado={cambiarType2}
-          tipo="text"
-          label="Type 2"
-          placeholder="Type 2"
-          name="type2"
-          leyendaError="The Type 1 or Type 2 field is required and must contain only numbers."
-          funcion={valitionTypes}
-        />
+      <div className="style-form">
+        <form onSubmit="if(!confirm('Is the form filled out correctly?')){return false;}else{{handleSubmit}}">
+          <div>
+            <label htmlFor='name' className={!error.name ? 'label-input-form' : 'label-input-form-not-valid'}>Name</label>
+            <div className='group-input-form'>
+              <input
+                name='name'
+                type="text"
+                placeholder='Name'
+                value={input.name}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.name ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.name ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.name}
+              </div>
+            </div>
+          </div>
 
-        <ContenedorBotonCentrado>
-          <Boton type="submit">Create Pokémon</Boton>
-          {formularioValido === true && <MensajeExito>Formulario enviado exitosamente!</MensajeExito>}
-        </ContenedorBotonCentrado>
-      </Formulario>
+          <div>
+            <label htmlFor='life' className={!error.life ? 'label-input-form' : 'label-input-form-not-valid'}>Life</label>
+            <div className='group-input-form'>
+              <input
+                name='life'
+                type="text"
+                placeholder='Life'
+                value={input.life}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.life ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.life ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.life}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='attack' className={!error.attack ? 'label-input-form' : 'label-input-form-not-valid'}>Attack</label>
+            <div className='group-input-form'>
+              <input
+                name='attack'
+                type="text"
+                placeholder='Attack'
+                value={input.attack}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.attack ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.attack ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.attack}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='defense' className={!error.defense ? 'label-input-form' : 'label-input-form-not-valid'}>Defense</label>
+            <div className='group-input-form'>
+              <input
+                name='defense'
+                type="text"
+                placeholder='Defense'
+                value={input.defense}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.defense ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.defense ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.defense}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='speed' className={!error.speed ? 'label-input-form' : 'label-input-form-not-valid'}>Speed</label>
+            <div className='group-input-form'>
+              <input
+                name='speed'
+                type="text"
+                placeholder='Speed'
+                value={input.speed}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.speed ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.speed ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.speed}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='height' className={!error.height ? 'label-input-form' : 'label-input-form-not-valid'}>Height</label>
+            <div className='group-input-form'>
+              <input
+                name='height'
+                type="text"
+                placeholder='Height'
+                value={input.height}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.height ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.height ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.height}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='weight' className={!error.weight ? 'label-input-form' : 'label-input-form-not-valid'}>Weight</label>
+            <div className='group-input-form'>
+              <input
+                name='weight'
+                type="text"
+                placeholder='Weight'
+                value={input.weight}
+                onChange={onChange}
+                onBlur={(e) => validate(e.target.name)}
+                className={error.weight ? "input-form-style-not-valid" : "input-form-style"}
+                required>
+              </input>
+              <div className={!error.weight ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.weight}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='image' className='label-input-form'>Image</label>
+            <div className='group-input-form'>
+              <input
+                name='image'
+                type="text"
+                placeholder='Image'
+                value={input.image}
+                onChange={onChange}
+                className="input-form-style">
+              </input>
+              {/* <div className={!error.image? 'leyenda-msg-field-valid-not-valid': 'leyenda-msg-field-not-valid'}>
+            {error.image}
+            </div> */}
+            </div>
+          </div>
+
+          {/* <div>
+          <label>Image</label>
+          <input name='image'
+            onChange={onChange}
+          >
+          </input>
+        </div> */}
+
+          <div>
+            <label htmlFor='type1' className={!error.type1 ? 'label-input-form' : 'label-input-form-not-valid'}>Type1</label>
+            <div className='group-input-form'>
+              <select
+                name='type1'
+                onChange={onChange}
+                placeholder='Select'
+                onBlur={(e) => validate(e.target.name)}
+                className="input-form-style">
+
+                <option value=''>Select...</option>
+                {
+                  listTypes.map((name, index) => (
+                    <option value={name} key={index}>{name}</option>
+                  ))
+                }
+              </select>
+              <div className={!error.type1 ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.type1}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor='type2' className={!error.type2 ? 'label-input-form' : 'label-input-form-not-valid'}>Type2</label>
+            <div className='group-input-form'>
+              <select
+                name='type2'
+                onChange={onChange}
+                placeholder='Select'
+                onBlur={(e) => validate(e.target.name)}
+                className="input-form-style">
+
+                <option value=''>Select...</option>
+                {
+                  listTypes.map((name, index) => (
+                    <option value={name} key={index}>{name}</option>
+                  ))
+                }
+              </select>
+              <div className={!error.type2 ? 'leyenda-msg-field-valid-not-valid' : 'leyenda-msg-field-not-valid'}>
+                {error.type2}
+              </div>
+            </div>
+          </div>
+
+          <div className='content-button-submit'>
+            <button
+              type='submit'
+              className='button-submit'
+              onClick={handleSubmit}
+              disabled={
+                input.name === "" ||
+                  input.life === "" ||
+                  input.attack === "" ||
+                  input.defense === "" ||
+                  input.speed === "" ||
+                  input.height === "" ||
+                  input.weight === "" ||
+                  input.type1 === "" ||
+                  input.type2 === ""
+                  ? true
+                  : false
+              }
+            >Create Pokémon</button>
+          </div>
+        </form>
+
+      </div>
     </div>
   )
 }
