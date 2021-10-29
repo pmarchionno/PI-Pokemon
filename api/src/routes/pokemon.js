@@ -10,7 +10,7 @@ router.get('/', async function (req, res, next) {
 
   try {
     if (!name) {
-      let pokeApi = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=22&offset=0');
+      let pokeApi = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=40&offset=0');
       let pokeApiUrl = pokeApi.data.results?.map((el) => axios.get(el.url));
 
       let pokeApiInfo = await axios.all(pokeApiUrl);
@@ -51,19 +51,6 @@ router.get('/', async function (req, res, next) {
     } else {
       let pokemonApi = [];
 
-      let pokeApi = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
-        .then((req) => {
-          pokemonApi = [{
-            id: req.data.id,
-            name: req.data.name.charAt(0).toUpperCase() + req.data.name.slice(1),
-            image: req.data.sprites.front_default,
-            flagId: false,
-            types: req.data.types.length > 0 ? req.data.types.map((obj) => obj.type.name) : []
-          }]
-        })
-        .catch((err) => pokemonApi = [] );
-
-      
       let pokeDb = await Pokemon.findAll({
         where: {
           name: {
@@ -81,18 +68,33 @@ router.get('/', async function (req, res, next) {
           id: el.id,
           name: el.name.charAt(0).toUpperCase() + el.name.slice(1),
           image: el.image,
-          flagId: el. flagId,
+          flagId: el.flagId,
           types: el.Types.map((obj) => obj.name)
         }
         return obj;
       })
 
-      let pokes = [...pokemonApi, ...pokemonBd];
-      
+      if (pokemonBd.length > 0) {
+        return res.json(pokemonBd);
+      }
+
+      let pokeApi = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
+        .then((req) => {
+          pokemonApi = [{
+            id: req.data.id,
+            name: req.data.name.charAt(0).toUpperCase() + req.data.name.slice(1),
+            image: req.data.sprites.front_default,
+            flagId: false,
+            types: req.data.types.length > 0 ? req.data.types.map((obj) => obj.type.name) : []
+          }]
+        })
+        .catch((err) => pokemonApi = []);
+
+      let pokes = [...pokemonApi];
+
       if (pokes.length > 0) {
         return res.json(pokes);
-      }
-      else {
+      } else {
         return next({ message: 'Pokemon Not Found', status: 400 })
       }
     }
@@ -104,12 +106,12 @@ router.get('/', async function (req, res, next) {
 
 router.get('/:id/:flagId', async (req, res, next) => {
   const { id, flagId } = req.params;
-  
+
   if (!id) return next({ message: 'Id is require!', status: 500 });
   if (flagId == "true") {
-    try{
+    try {
       let poke = await Pokemon.findByPk(id, { include: [Type] })
-      
+
       let obj = {
         id: poke.id,
         name: poke.name,
@@ -125,7 +127,7 @@ router.get('/:id/:flagId', async (req, res, next) => {
       }
 
       return res.json(obj);
-    }catch{
+    } catch {
       return next({ message: 'Pokemon not Found!', status: 500 });
     }
   } else {

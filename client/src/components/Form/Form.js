@@ -53,8 +53,7 @@ export function Form(props) {
   async function handleSubmit(e) {
     e.preventDefault();
     dispatch(addPokemon(input));
-    await window.alert("The Pokémon has been created!")
-    .then(window.location.href = "/");
+    window.alert("The Pokémon has been created!")
   }
 
   const onChange = (e) => {
