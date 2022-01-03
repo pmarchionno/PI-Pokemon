@@ -10,8 +10,8 @@ const Card = (props) => {
     <div class="slide-container">
       <div class="wrapper">
         <Link className="Link" to={`/detail/${id}/${flagId}`}>
-          <div class="poke-card poke">
-            <div class="poke-card__image poke-card__image--poke">
+          <div className="poke-card poke">
+            <div className={`poke-card__image poke-card__image--poke ${types[0]}`}>
               <img src={image} alt={name} />
             </div>
 

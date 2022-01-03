@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { addPokemon, getPokemonTyes } from "../../actions";
+import iconTypes from '../helpers/iconTypes';
+import * as BiIcons from 'react-icons/bi';
 import './form.css';
 
 export function Form(props) {
   const dispatch = useDispatch();
   const listTypes = useSelector((state) => state.pokemonTypes);
+  const [currentType, setCurrentType] = useState('All Types');
+  const [toogle, setToogle] = useState(false)
 
-  // useEffect(() => {
-  //   dispatch(getPokemonTyes())
-  // }, [dispatch])
+  useEffect(() => {
+    dispatch(getPokemonTyes())
+  }, [dispatch])
 
   const [input, setInput] = useState(
     {
@@ -35,11 +39,29 @@ export function Form(props) {
     speed: '',
     height: '',
     weight: '',
-    image: 'https://p4.wallpaperbetter.com/wallpaper/710/195/806/pokemon-pikachu-soft-shading-fan-art-1400x1046-anime-pokemon-hd-art-wallpaper-preview.jpg',
+    image: 'http://www.soloimagen.net/dibujos-animados/Pokemon/Pokemon%2011.gif', // https://p4.wallpaperbetter.com/wallpaper/710/195/806/pokemon-pikachu-soft-shading-fan-art-1400x1046-anime-pokemon-hd-art-wallpaper-preview.jpg',
     type1: '',
     type2: '',
     types: []
   });
+
+  function onClickSelect(e) {
+    e.preventDefault();
+    setToogle(!toogle);
+  }
+
+  function onChangeValue(e, name = 'All Types') {
+    e.preventDefault();
+    let nameType = name["el"];
+    let filter = name["el"];
+    if (nameType === undefined) {
+      nameType = 'All Types';
+      filter = null;
+    }
+    nameType = nameType.charAt(0).toUpperCase() + nameType.slice(1)
+    setCurrentType(nameType);
+    setToogle(!toogle);
+  }
 
   function validate(el) {
     if (input[el] === "") {
@@ -52,25 +74,19 @@ export function Form(props) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    
+
+<div class="alert alert-info">
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit iure quod, quae architecto animi corporis dolorum odio? Assumenda itaque eos laboriosam at? Voluptatem maxime quam quas error possimus tempore ullam!</p>
+    <button type="button" class="btn btn-primary">Guardar</button>
+</div>
+
+
     dispatch(addPokemon(input));
     window.alert("The Pokémon has been created!")
   }
 
   const onChange = (e) => {
-    // const target = e.target;
-    // const regexName = /^[A-Za-z]+$/;
-    // if (e.target.name === 'temperament') {
-    //   setInput({
-    //     ...input,
-    //     [e.target.name]: [...input.temperament, e.target.value]
-    //   }); 
-    // } else {
-    //   setInput({
-    //     ...input,
-    //     [e.target.name]: e.target.value
-    //   })
-    // }
-
     const nameEvent = e.target.name;
 
     let type = [];
@@ -272,8 +288,50 @@ export function Form(props) {
           </input>
         </div> */}
 
+          <div className="contenedor group-input-form">
+            <form action="">
+              <div className="selectbox" onClick={onClickSelect} >
+                <div className={`select ${toogle ? 'active' : ''}`} id="select">
+                  <div className="contenido-select">
+                    {
+                      iconTypes[currentType.toLowerCase()]
+                        ? <img src={iconTypes[currentType.toLowerCase()]} alt={`icon_${currentType}`} />
+                        : <h1></h1>
+                    }
+                    <h1 className="titulo">{currentType}</h1>
+                  </div>
+                  <i className="BiChevronDown">{BiIcons.BiChevronDown()}</i>
+                </div>
+
+                <div className={`opciones ${toogle ? 'active' : ''}`} id="opciones">
+                  <a href="#" className="opcion" name='All Types' onClick={(element) => onChangeValue(element, 'All Types')}>
+                    <div className="contenido-opcion">
+                      <div className="textos">
+                        <h1 className="titulo">All Types</h1>
+                      </div>
+                    </div>
+                  </a>
+                  {
+                    listTypes?.map((el, index) => (
+                      <a key={`filterByType-option-${el}`} href="#" className="opcion" name={el} onClick={(element) => onChangeValue(element, { el })}>
+                        <div className="contenido-opcion">
+                          <img src={iconTypes[el]} alt={`icon_${el}`} />
+                          <div className="textos">
+                            <h1 className="titulo">{el}</h1>
+                          </div>
+                        </div>
+                      </a>
+                    ))
+                  }
+                </div>
+              </div>
+
+              <input type="hidden" name="pais" id="inputSelect" value={currentType} />
+            </form>
+          </div>
+
           <div>
-            <label htmlFor='type1' className={!error.type1 ? 'label-input-form' : 'label-input-form-not-valid'}>Type1</label>
+            <label htmlFor='type1' className={!error.type1 ? 'label-input-form' : 'label-input-form-not-valid'}>Type 1</label>
             <div className='group-input-form'>
               <select
                 name='type1'

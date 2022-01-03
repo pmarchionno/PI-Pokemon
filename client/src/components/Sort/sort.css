@@ -26,3 +26,7 @@
   background: linear-gradient(180deg, #fbde74 0%, #ff9900 100%);
   transition: all .3s;
 }
+
+.active-sort{
+  background: linear-gradient(180deg, #fbde74 0%, #ff9900 100%);
+}

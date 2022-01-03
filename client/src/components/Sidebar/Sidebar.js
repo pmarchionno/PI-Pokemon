@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './sidebar.css';
 import * as BiIcons from 'react-icons/bi';
@@ -8,6 +9,7 @@ import Sort from '../Sort/Sort';
 
 const Sidebar = (props) => {
   const { setFilterCreateBy, setFilterType, listTypes, setCurrentPage } = props;
+  const [option, setOption] = useState(0);
 
   return (
     <div className='sidebar'>
@@ -49,6 +51,9 @@ const Sidebar = (props) => {
               orderType='asc'
               icon={BiIcons.BiSortAZ}
               BiIcons={BiIcons}
+              option={1}
+              setOption={setOption}
+              active={option===1}
             />
             <Sort
               name='Z-A'
@@ -56,6 +61,9 @@ const Sidebar = (props) => {
               orderType='desc'
               icon={BiIcons.BiSortZA}
               BiIcons={BiIcons}
+              option={2}
+              setOption={setOption}
+              active={option===2}
             />
           </div>
 
@@ -67,6 +75,9 @@ const Sidebar = (props) => {
               orderType='asc'
               icon={BiIcons.BiSortUp}
               BiIcons={BiIcons}
+              option={3}
+              setOption={setOption}
+              active={option===3}
             />
             <Sort
               name='9-1'
@@ -74,6 +85,9 @@ const Sidebar = (props) => {
               orderType='desc'
               icon={BiIcons.BiSortDown}
               BiIcons={BiIcons}
+              option={4}
+              setOption={setOption}
+              active={option===4}
             />
           </div>
         </li>

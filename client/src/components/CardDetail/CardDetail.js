@@ -30,7 +30,7 @@ const CardDetail = () => {
           <div id="cards">
 
             <figure class="card card--normal">
-              <div class="card__image-container">
+              <div class={`card__image-container ${pokeDetail.types[0]}`}>
                 <img src={pokeDetail.image} alt={pokeDetail.name} class="card__image" />
               </div>
 
